@@ -4,6 +4,8 @@
 #
 
 from .sam3xa_tc import SAM3xaTc
+from .ht32_ckcu import HT32CKCU_RSTCU
+from .cm0p_systick import CortexM0PSysTick
 from .cm3_systick import CortexM3SysTick
 from .cm4_systick import CortexM4SysTick
 from .stm32f1xx_tim import STM32F1xxTim

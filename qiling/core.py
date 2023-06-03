@@ -11,7 +11,7 @@ from typing import TYPE_CHECKING, Any, AnyStr, List, Mapping, MutableMapping, Op
 # See https://stackoverflow.com/questions/39740632/python-type-hinting-without-cyclic-imports
 if TYPE_CHECKING:
     from os import PathLike
-    from unicorn.unicorn import Uc
+    from unicorn.unicorn import Uc, UcError
     from configparser import ConfigParser
     from logging import Logger
     from .arch.arch import QlArch
@@ -20,6 +20,7 @@ if TYPE_CHECKING:
     from .hw.hw import QlHwManager
     from .loader.loader import QlLoader
 
+from unicorn.unicorn import UcError
 from .const import QL_ARCH, QL_ENDIAN, QL_OS, QL_STATE, QL_STOP, QL_VERBOSE, QL_ARCH_INTERPRETER, QL_OS_BAREMETAL
 from .exception import QlErrorFileNotFound, QlErrorArch, QlErrorOsType
 from .host import QlHost
@@ -762,9 +763,29 @@ class Qiling(QlCoreHooks, QlCoreStructs):
         # reset exception status before emulation starts
         self._internal_exception = None
 
-        # effectively start the emulation. this returns only after uc.emu_stop is called
-        self.uc.emu_start(begin, end, timeout, count)
-
+        try:
+            # effectively start the emulation. this returns only after uc.emu_stop is called
+            self.uc.emu_start(begin, end, timeout, count)
+        except UcError as e:
+            print(e)
+            print(self.arch.regs)
+            for l in self.mem.get_formatted_mapinfo():
+                print(l)
+            
+            address = self.arch.regs.arch_pc
+            size = 0x20
+            data = self.mem.read(address, size) 
+            anibbles = self.arch.bits // 4
+            for insn in self.arch.disassembler.disasm(data, address):
+                print(f'{insn.address:0{anibbles}x}: {insn.bytes.hex(" "):20s} {insn.mnemonic:10s} {insn.op_str}')
+                
+            for off in range(0, size, 4):
+                print(self.stack_read(off))
+                 
+            import sys
+            sys.exit(-1)
+            
+        
         # if an exception was raised during emulation, propagate it up
         if self.internal_exception is not None:
             raise self.internal_exception

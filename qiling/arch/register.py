@@ -50,6 +50,16 @@ class QlRegisterManager:
         else:
             super().__setattr__(name, value)
 
+    def __iter__(self):
+        return iter(self.register_mapping)
+    
+    def __str__(self) -> str:
+        repr = ""
+        for reg in self:
+            if isinstance(reg, str):
+                repr += f'{reg}\t: {self.read(reg):#x}\n'
+        return repr
+    
     def read(self, register: Union[str, int]):
         """Read a register value.
         """

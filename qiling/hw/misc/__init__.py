@@ -3,6 +3,7 @@
 # Cross Platform and Multi Architecture Advanced Binary Emulation Framework
 #
 
+from .cm0p_scb import CortexM0PScb
 from .cm3_scb import CortexM3Scb
 from .cm4_scb import CortexM4Scb
 from .sam3xa_wdt import SAM3xaWdt

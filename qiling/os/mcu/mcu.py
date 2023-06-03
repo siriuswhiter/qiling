@@ -6,7 +6,9 @@
 from typing import TYPE_CHECKING
 from unicorn import UC_ERR_OK, UcError
 
-from qiling.const import QL_OS
+from qiling.cc import QlCC, intel, arm, mips, riscv, ppc
+from qiling.const import QL_OS, QL_ARCH
+from qiling.os.fcall import QlFunctionCall
 from qiling.os.os import QlOs
 from qiling.extensions.multitask import UnicornTask
 
@@ -38,7 +40,23 @@ class QlOsMcu(QlOs):
     type = QL_OS.MCU
 
     def __init__(self, ql: 'Qiling'):
+        super(QlOsMcu, self).__init__(ql)
         self.ql = ql
+        
+        cc: QlCC = {
+            QL_ARCH.X86     : intel.cdecl,
+            QL_ARCH.X8664   : intel.amd64,
+            QL_ARCH.ARM     : arm.aarch32,
+            QL_ARCH.ARM64   : arm.aarch64,
+            QL_ARCH.CORTEX_M: arm.aarch32,
+            QL_ARCH.MIPS    : mips.mipso32,
+            QL_ARCH.RISCV   : riscv.riscv,
+            QL_ARCH.RISCV64 : riscv.riscv,
+            QL_ARCH.PPC     : ppc.ppc,
+        }[ql.arch.type](ql.arch)
+
+        self.fcall = QlFunctionCall(ql, cc)
+        
         self.runable = True
         self.fast_mode = False
 

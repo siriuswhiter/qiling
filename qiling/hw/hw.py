@@ -4,6 +4,7 @@
 #
 
 import ctypes
+import sys
 
 from qiling.core import Qiling
 from qiling.hw.peripheral import QlPeripheral
@@ -21,7 +22,7 @@ class QlHwManager:
         self.stepable = {}    
 
     def create(self, label: str, struct: str=None, base: int=None, kwargs: dict={}) -> "QlPeripheral":
-        """ Create the peripheral accroding the label and envs.
+        """ Create the peripheral according the label and envs.
 
             struct: Structure of the peripheral. Use defualt ql structure if not provide.
             base: Base address. Use defualt address if not provide.
@@ -96,7 +97,6 @@ class QlHwManager:
                 return hardware.read(address - hardware.base, size)
             else:
                 ql.log.debug('%s Read non-mapped hardware [0x%08x]' % (info, address))                
-                
                 buf = ctypes.create_string_buffer(size)
                 ctypes.memmove(buf, ctypes.addressof(mmio) + offset, size)
                 return int.from_bytes(buf.raw, byteorder='little')

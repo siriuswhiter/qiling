@@ -11,7 +11,7 @@ from qiling.arch.cortex_m_const import IRQ
 
 
 class CortexMScb(QlPeripheral):
-    def enable(self, IRQn):
+    def enable(self, IRQn) -> None:
         if IRQn == IRQ.USAGE_FAULT:
             self.instance.SHCSR |= 1 << 18
         if IRQn == IRQ.BUS_FAULT:

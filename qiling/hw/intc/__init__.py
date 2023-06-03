@@ -4,6 +4,7 @@
 #
 
 from .cm3_nvic import CortexM3Nvic
+from .cm0p_nvic import CortexM0PNvic
 from .cm4_nvic import CortexM4Nvic
 from .stm32f1xx_exti import STM32F1xxExti
 from .stm32f4xx_exti import STM32F4xxExti
