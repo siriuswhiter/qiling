@@ -89,6 +89,9 @@ class QlOsMcu(QlOs):
 
             self.runable = True
             self.counter = 0
+            for l in self.ql.mem.get_formatted_mapinfo():
+                print(l)
+            print(self.ql.arch.regs)
             while self.runable:
                 current_address = current_pc()
 
