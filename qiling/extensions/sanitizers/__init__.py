@@ -1,1 +1,2 @@
-from .sanitizer import asan_malloc_call, asan_free
+from .memorysanitizer import memsan_malloc_call, memsan_free_call
+from .addresssanitizer import asan_malloc_call
